@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 let mainWindow;
@@ -6,9 +6,12 @@ let mainWindow;
 const musicDir = path.join(__dirname, "..", "public", "musics");
 
 function createWindow() {
+    nativeTheme.themeSource = "system";
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        icon: path.join(__dirname, "..", "public", "icon.png"),
+        title: "SoundPilot",
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
