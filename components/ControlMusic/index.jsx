@@ -74,20 +74,22 @@ export default function ControlMusic() {
     }
 
     function handleProgressBarClick(event) {
-        if (audioRef.current) {
+        if (audioRef.current && audioRef.current.duration && !isNaN(audioRef.current.duration)) {
             const progressBar = event.currentTarget;
             const clickPosition = event.nativeEvent.offsetX;
             const totalWidth = progressBar.clientWidth;
             const porcentage = clickPosition / totalWidth;
             const time = audioRef.current.duration * porcentage;
-            audioRef.current.currentTime = time;
+            if (!isNaN(time) && isFinite(time)) {
+                audioRef.current.currentTime = time;
+            }
         }
     }
 
     function handlePrevious() {
         if (musicIndex > 0) {
             setMusicIndex(musicIndex - 1)
-            setAudio(`/music/${musicPlayList[musicIndex - 1]}`)
+            setAudio(`/musics/${musicPlayList[musicIndex - 1]}`)
             audioRef.current.load()
             audioRef.current.play()
             setCurrentTime(audioRef.current.currentTime)
@@ -97,7 +99,7 @@ export default function ControlMusic() {
     function handleNext() {
         if (musicIndex < musicPlayList.length - 1) {
             setMusicIndex(musicIndex + 1);
-            setAudio(`/music/${musicPlayList[musicIndex + 1]}`)
+            setAudio(`/musics/${musicPlayList[musicIndex + 1]}`)
             audioRef.current.load()
             audioRef.current.play()
             setCurrentTime(audioRef.current.currentTime)
