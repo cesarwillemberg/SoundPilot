@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
+import ExcluirIcon from "../icons/ExcluirIcon";
 
 export default function ModalPlaylist() {
     const [musicPlayList, setMusicPlayList] = useState([])
+
+    function removeMusicOnPlaylist(indexToRemove) {
+        setMusicPlayList(prevPlaylist => prevPlaylist.filter((_, index) => index !== indexToRemove))
+    }
 
     useEffect(() => {
         window.electronAPI.ReciveFromElectron("music-playable", (event, music) => {
@@ -14,7 +19,13 @@ export default function ModalPlaylist() {
             <h1 className="text-center text-white">PlayList</h1>
             <div className="m-4 bg-[#171719]">
                 {musicPlayList.length === 0 ? <p className="text-zinc-400">Empty</p> : musicPlayList.map((music, index) => {
-                    return <p className="text-white" key={index}>{music}</p>
+                    return (
+                        <div style={{display: "flex"}}>
+                            <p className="text-white" style={{paddingRight: "20px"}} key={index}>{music}</p>
+                            <ExcluirIcon style={{ width: '20px', color: 'red' }} onClick={() => removeMusicOnPlaylist(index)}/>
+                        </div>
+                    )
+
                 })}
             </div>
         </div>
