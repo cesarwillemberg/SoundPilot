@@ -4,6 +4,7 @@ import PlayIcon from "../icons/PlayIcon"
 import PauseIcon from "../icons/PauseIcon"
 import NextIcon from "../icons/NextIcon"
 import { formatTime } from "@/util/formatTime"
+import VolumeController from "../VolumeController"
 
 export default function ControlMusic() {
     const [musicPlayList, setMusicPlayList] = useState([])
@@ -107,64 +108,70 @@ export default function ControlMusic() {
     }
 
     return (
-        <div className="w-96 h-14 px-8 flex-col justify-center items-center gap-4 inline-flex">
-            <div className="justify-center items-center gap-8 inline-flex">
-                <div className="w-4 h-4 justify-start items-start gap-2.5 flex">
-                    <div className="w-4 h-4 relative">
-                        <PreviousIcon onClick={handlePrevious}  />
+        <div className="w-[50rem] inline-flex justify-center">
+            <div className="w-96 h-14 px-8 flex-col justify-center items-center gap-4 inline-flex">
+                <div className="justify-center items-center gap-8 inline-flex">
+                    <div className="w-4 h-4 justify-start items-start gap-2.5 flex">
+                        <div className="w-4 h-4 relative">
+                            <PreviousIcon onClick={handlePrevious}  />
+                        </div>
                     </div>
-                </div>
-                <div
-                    id="play"
-                    className="flex w-4 h-4 justify-start items-start gap-2.5"
-                >
-                    <div className="w-4 h-4 relative">
-                        <PlayIcon onClick={handlePlay} />
+                    <div
+                        id="play"
+                        className="flex w-4 h-4 justify-start items-start gap-2.5"
+                    >
+                        <div className="w-4 h-4 relative">
+                            <PlayIcon onClick={handlePlay} />
+                        </div>
+                    </div>
+
+                    <audio ref={audioRef} onEnded={handleNext} >
+                        <source src={audio} type="audio/mp3" />
+                    </audio>
+
+                    <div
+                        id="pause"
+                        className="hidden w-4 h-4 justify-start items-start gap-2.5"
+                    >
+                        <div className="w-4 h-4 relative">
+                            <PauseIcon onClick={handlePause}  />
+                        </div>
+                    </div>
+
+                    <div className="w-4 h-4 justify-start items-start gap-2.5 flex">
+                        <div className="w-4 h-4 relative">
+                            <NextIcon onClick={handleNext}  />
+                        </div>
                     </div>
                 </div>
 
-                <audio ref={audioRef} onEnded={handleNext} >
-                    <source src={audio} type="audio/mp3" />
-                </audio>
-
-                <div
-                    id="pause"
-                    className="hidden w-4 h-4 justify-start items-start gap-2.5"
-                >
-                    <div className="w-4 h-4 relative">
-                        <PauseIcon onClick={handlePause}  />
+                <div className="self-stretch justify-start items-center gap-8 inline-flex">
+                    <div className="text-center text-xs text-white font-semibold leading-tight tracking-wide">
+                        <p>{audioRef.current ? formatTime(duration) : "00:00"}</p>
                     </div>
-                </div>
 
-                <div className="w-4 h-4 justify-start items-start gap-2.5 flex">
-                    <div className="w-4 h-4 relative">
-                        <NextIcon onClick={handleNext}  />
+                    <div
+                        className="w-96 h-1 relative bg-neutral-600 rounded-full"
+                        onClick={handleProgressBarClick}
+                    >
+                    <div
+                        id="progress-bar"
+                        className="h-1 w-1 rounded-full bg-white absolute top-1/2 transform -translate-y-1/2"
+                        style={{
+                            left: `${audioRef.current ? (audioRef.current.currentTime / audioRef.current.duration) * 100 : 0}%`,
+                        }}
+                    />
+                    </div>
+
+                    <div className="text-center text-xs text-white font-semibold leading-tight tracking-wide">
+                        {audioRef.current ? formatTime(currentTime) : "00:00"}
                     </div>
                 </div>
             </div>
-
-            <div className="self-stretch justify-start items-center gap-8 inline-flex">
-                <div className="text-center text-xs text-white font-semibold leading-tight tracking-wide">
-                    <p>{audioRef.current ? formatTime(duration) : "00:00"}</p>
-                </div>
-
-                <div
-                    className="w-96 h-1 relative bg-neutral-600 rounded-full"
-                    onClick={handleProgressBarClick}
-                >
-                <div
-                    id="progress-bar"
-                    className="h-1 w-1 rounded-full bg-white absolute top-1/2 transform -translate-y-1/2"
-                    style={{
-                        left: `${audioRef.current ? (audioRef.current.currentTime / audioRef.current.duration) * 100 : 0}%`,
-                    }}
-                />
-                </div>
-
-                <div className="text-center text-xs text-white font-semibold leading-tight tracking-wide">
-                    {audioRef.current ? formatTime(currentTime) : "00:00"}
-                </div>
-            </div>
-    </div>
+            <div className="flex items-center justify-end ">
+                {/* <VolumeMutedIcon style={{ width: '10px' }} /> */}
+                <VolumeController audioRef={audioRef} />
+            </div> 
+        </div>
     );
 }
